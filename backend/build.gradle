@@ -1,0 +1,64 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.4.1'
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.arnavjot'
+version = '1.0.0'
+
+// Java 17 bytecode, compiled by any JDK 17 or newer.
+tasks.withType(JavaCompile).configureEach {
+    options.release = 17
+    options.compilerArgs << '-parameters'
+}
+
+repositories {
+    mavenCentral()
+}
+
+// Spring Boot 3.4 manages Testcontainers 1.20, whose Docker client (API 1.32) is
+// refused by Docker Engine 29+. Override Boot's managed version.
+ext['testcontainers.version'] = '2.0.5'
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'io.micrometer:micrometer-registry-prometheus'
+    implementation 'org.flywaydb:flyway-core'
+    implementation 'org.flywaydb:flyway-database-postgresql'
+    // Push notifications (Firebase Cloud Messaging) through the Admin SDK.
+    implementation 'com.google.firebase:firebase-admin:9.4.2'
+    // Accounts: BCrypt password hashing (just the crypto module, not the Spring Security
+    // filter chain) and signed JWT access tokens.
+    implementation 'org.springframework.security:spring-security-crypto'
+    implementation 'com.nimbusds:nimbus-jose-jwt:9.37.3'
+    // Uploads: S3 API (SeaweedFS locally; works unchanged against Amazon S3).
+    implementation platform('software.amazon.awssdk:bom:2.29.6')
+    implementation 'software.amazon.awssdk:s3'
+    runtimeOnly 'org.postgresql:postgresql'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.testcontainers:testcontainers-junit-jupiter'
+    testImplementation 'org.testcontainers:testcontainers-postgresql'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+    testLogging {
+        events 'failed'
+        exceptionFormat 'full'
+    }
+}
+
+// One self-contained jar: build/libs/glimpse-server.jar
+bootJar {
+    archiveFileName = 'glimpse-server.jar'
+}
+jar {
+    enabled = false
+}

@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Performance: metric cards. The scroll content gets the navigation bar inset added
+    to its bottom padding in code (clipToPadding=false lets it scroll under the bar);
+    the app bar handles the status bar.
+-->
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include
+        android:id="@+id/app_bar"
+        layout="@layout/view_app_bar" />
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scroll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:id="@+id/content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/pn_space_4">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/perf_intro"
+                android:textAppearance="?attr/textAppearanceBodyMedium"
+                android:textColor="?attr/colorOnSurfaceVariant" />
+
+            <!-- Time to first frame: the headline comparison. -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/pn_space_4">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/pn_space_4">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/perf_ttff_title"
+                        android:textAppearance="?attr/textAppearanceTitleMedium" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/pn_space_4"
+                        android:baselineAligned="false"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                style="@style/Widget.Glimpse.MetricLabel"
+                                android:text="@string/perf_ttff_preloaded_label" />
+
+                            <TextView
+                                android:id="@+id/preloaded_p50"
+                                style="@style/Widget.Glimpse.MetricValue"
+                                tools:text="38 ms" />
+
+                            <TextView
+                                android:id="@+id/preloaded_detail"
+                                style="@style/Widget.Glimpse.MetricDetail"
+                                tools:text="p95 112 ms · 31 clips" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/pn_space_4"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                style="@style/Widget.Glimpse.MetricLabel"
+                                android:text="@string/perf_ttff_cold_label" />
+
+                            <TextView
+                                android:id="@+id/cold_p50"
+                                style="@style/Widget.Glimpse.MetricValue"
+                                tools:text="420 ms" />
+
+                            <TextView
+                                android:id="@+id/cold_detail"
+                                style="@style/Widget.Glimpse.MetricDetail"
+                                tools:text="p95 910 ms · 30 clips" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/pn_space_3">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/pn_space_4">
+
+                    <TextView
+                        style="@style/Widget.Glimpse.MetricLabel"
+                        android:text="@string/perf_rebuffers" />
+
+                    <TextView
+                        android:id="@+id/rebuffers"
+                        style="@style/Widget.Glimpse.MetricValue"
+                        tools:text="0.016" />
+
+                    <TextView
+                        android:id="@+id/rebuffers_detail"
+                        style="@style/Widget.Glimpse.MetricDetail"
+                        tools:text="1 in 61 plays" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/pn_space_3">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/pn_space_4">
+
+                    <TextView
+                        style="@style/Widget.Glimpse.MetricLabel"
+                        android:text="@string/perf_cache" />
+
+                    <TextView
+                        android:id="@+id/cache"
+                        style="@style/Widget.Glimpse.MetricValue"
+                        tools:text="64%" />
+
+                    <TextView
+                        android:id="@+id/cache_detail"
+                        style="@style/Widget.Glimpse.MetricDetail"
+                        tools:text="21 MB from cache · 12 MB from network, since app start" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:id="@+id/pending"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/pn_space_6"
+                android:textAppearance="?attr/textAppearanceBodyMedium"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                tools:text="12 events waiting to upload" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/pn_space_2"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/upload_now"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="@dimen/pn_touch_target"
+                    android:text="@string/perf_upload" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/reset"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/pn_space_2"
+                    android:minHeight="@dimen/pn_touch_target"
+                    android:text="@string/perf_reset" />
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

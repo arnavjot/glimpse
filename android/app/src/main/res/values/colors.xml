@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Glimpse design system colour tokens.
+
+    Two layers:
+    1. The raw palette, pn_dark_* and pn_light_*. Never overridden; the feed uses the
+       dark values directly because it is always dark.
+    2. Semantic tokens, pn_*. Light values here, dark values in values-night/colors.xml.
+       Layouts and themes use only these (or the feed's fixed ones).
+-->
+<resources>
+    <!-- Raw palette: dark theme -->
+    <color name="pn_dark_bg">#FF0B0B0F</color>
+    <color name="pn_dark_surface_1">#FF16161C</color>
+    <color name="pn_dark_surface_2">#FF202029</color>
+    <color name="pn_dark_outline">#FF2E2E38</color>
+    <color name="pn_dark_ink">#FFF5F5F7</color>
+    <color name="pn_dark_ink_muted">#FFA1A1AA</color>
+    <color name="pn_dark_brand">#FFC6F432</color>
+    <color name="pn_dark_on_brand">#FF0B0B0F</color>
+    <color name="pn_dark_like">#FFFF4D6D</color>
+    <color name="pn_dark_success">#FF3DDC97</color>
+    <color name="pn_dark_error">#FFFF8A3D</color>
+
+    <!-- Raw palette: light theme -->
+    <color name="pn_light_bg">#FFF7F7F8</color>
+    <color name="pn_light_surface_1">#FFFFFFFF</color>
+    <color name="pn_light_surface_2">#FFEEEEF1</color>
+    <color name="pn_light_outline">#FFD9D9DF</color>
+    <color name="pn_light_ink">#FF111114</color>
+    <color name="pn_light_ink_muted">#FF5B5B66</color>
+    <color name="pn_light_brand">#FF4A7A00</color>
+    <color name="pn_light_on_brand">#FFFFFFFF</color>
+    <color name="pn_light_like">#FFE11D48</color>
+    <color name="pn_light_success">#FF0F7B4A</color>
+    <color name="pn_light_error">#FFC2410C</color>
+
+    <!-- Theme-independent: everything drawn over video -->
+    <color name="pn_scrim">#B8000000</color>
+    <color name="pn_scrim_clear">#00000000</color>
+    <color name="pn_feed_ink">#FFFFFFFF</color>
+    <color name="pn_feed_ink_muted">#B8FFFFFF</color>
+    <color name="pn_feed_chip">#CC202029</color>
+    <!-- Soft shadow under text over video, so it reads on bright frames. -->
+    <color name="pn_text_shadow">#66000000</color>
+    <!-- Playback progress: white bar on a faint white track. -->
+    <color name="pn_progress_track">#3DFFFFFF</color>
+
+    <!-- Semantic tokens (light). Dark values: values-night/colors.xml -->
+    <color name="pn_bg">@color/pn_light_bg</color>
+    <color name="pn_surface_1">@color/pn_light_surface_1</color>
+    <color name="pn_surface_2">@color/pn_light_surface_2</color>
+    <color name="pn_outline">@color/pn_light_outline</color>
+    <color name="pn_ink">@color/pn_light_ink</color>
+    <color name="pn_ink_muted">@color/pn_light_ink_muted</color>
+    <color name="pn_brand">@color/pn_light_brand</color>
+    <color name="pn_on_brand">@color/pn_light_on_brand</color>
+    <color name="pn_like">@color/pn_light_like</color>
+    <color name="pn_success">@color/pn_light_success</color>
+    <color name="pn_error">@color/pn_light_error</color>
+</resources>

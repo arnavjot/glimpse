@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory
+        app:iconSpaceReserved="false"
+        app:title="@string/pref_account">
+        <!-- Not stored: shows the session (SessionManager) and signs in or out. -->
+        <Preference
+            app:iconSpaceReserved="false"
+            app:key="account"
+            app:persistent="false"
+            app:singleLineTitle="false"
+            app:title="@string/pref_sign_in"
+            app:summary="@string/pref_sign_in_summary" />
+        <!-- Shown only while signed in. -->
+        <Preference
+            app:iconSpaceReserved="false"
+            app:isPreferenceVisible="false"
+            app:key="my_uploads"
+            app:persistent="false"
+            app:singleLineTitle="false"
+            app:title="@string/my_uploads"
+            app:summary="@string/pref_my_uploads_summary" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:iconSpaceReserved="false"
+        app:title="@string/pref_server">
+        <EditTextPreference
+            app:iconSpaceReserved="false"
+            app:singleLineTitle="false"
+            app:key="api_url"
+            app:title="@string/pref_api_url"
+            app:dialogMessage="@string/pref_api_url_hint" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:iconSpaceReserved="false"
+        app:title="@string/pref_notifications">
+        <SwitchPreferenceCompat
+            app:iconSpaceReserved="false"
+            app:singleLineTitle="false"
+            app:key="new_clip_notifications"
+            app:defaultValue="false"
+            app:title="@string/pref_new_clips"
+            app:summary="@string/pref_new_clips_summary" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:iconSpaceReserved="false"
+        app:title="@string/pref_playback">
+        <SwitchPreferenceCompat
+            app:iconSpaceReserved="false"
+            app:singleLineTitle="false"
+            app:key="preload_enabled"
+            app:defaultValue="true"
+            app:title="@string/pref_preload"
+            app:summary="@string/pref_preload_summary" />
+        <SwitchPreferenceCompat
+            app:iconSpaceReserved="false"
+            app:singleLineTitle="false"
+            app:key="debug_overlay"
+            app:defaultValue="false"
+            app:title="@string/pref_overlay"
+            app:summary="@string/pref_overlay_summary" />
+    </PreferenceCategory>
+</PreferenceScreen>

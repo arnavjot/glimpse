@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Glimpse</string>
+    <string name="performance">Performance</string>
+    <string name="settings">Settings</string>
+
+    <!-- Feed -->
+    <string name="creator_handle">\@%1$s</string>
+    <string name="like">Like</string>
+    <string name="unlike">Unlike</string>
+    <plurals name="like_a11y">
+        <item quantity="one">%1$s, %2$s like</item>
+        <item quantity="other">%1$s, %2$s likes</item>
+    </plurals>
+    <string name="retry">Retry</string>
+    <string name="share">Share</string>
+    <string name="sponsored">Sponsored</string>
+    <string name="learn_more">Learn more</string>
+    <string name="no_browser">No app can open this link.</string>
+    <string name="share_chooser">Share clip</string>
+    <!-- Shared text: title, creator handle, link. -->
+    <string name="share_text">%1$s by \@%2$s on Glimpse\n%3$s</string>
+    <string name="mute">Mute</string>
+    <string name="unmute">Unmute</string>
+    <string name="play_pause">Play or pause</string>
+    <string name="paused">Paused</string>
+    <string name="open_failed_missing">That clip isn\'t available any more.</string>
+    <string name="open_failed_network">Couldn\'t open that clip. Check your connection.</string>
+    <string name="feed_empty_title">No clips yet</string>
+    <string name="feed_empty">Is the backend running? Pull down to try again.</string>
+    <string name="feed_error_title">Can\'t load the feed</string>
+    <string name="feed_error_network">Check your connection and the server address in Settings.</string>
+    <string name="feed_error_server">The server had a problem. Try again in a moment.</string>
+    <string name="like_failed_network">Couldn\'t save your like. Check your connection.</string>
+    <string name="like_failed_server">Couldn\'t save your like. Try again in a moment.</string>
+    <string name="offline_banner">Offline · showing saved clips</string>
+    <string name="overlay_first_frame">first frame %1$d ms · %2$s</string>
+    <string name="preload_on">preload on</string>
+    <string name="preload_off">preload off</string>
+
+    <!-- Performance -->
+    <string name="perf_intro">Measured on this device over the last 7 days. Turn preloading off in Settings, swipe through about 30 clips, turn it back on, swipe 30 more, then compare.</string>
+    <string name="perf_ttff_title">Time to first frame · median</string>
+    <string name="perf_ttff_preloaded_label">Preloading on</string>
+    <string name="perf_ttff_cold_label">Preloading off</string>
+    <string name="perf_ttff_detail">p95 %1$s · %2$s</string>
+    <plurals name="clips">
+        <item quantity="one">%d clip</item>
+        <item quantity="other">%d clips</item>
+    </plurals>
+    <string name="perf_ms">%1$d ms</string>
+    <string name="perf_rebuffers">Rebuffers per play</string>
+    <string name="perf_rebuffers_detail">%1$d in %2$d plays</string>
+    <string name="perf_cache">Disk cache hit ratio</string>
+    <string name="perf_cache_detail">%1$s from cache · %2$s from network, since app start</string>
+    <string name="perf_percent">%1$d%%</string>
+    <string name="perf_none">–</string>
+    <string name="perf_no_data">No data yet</string>
+    <plurals name="perf_pending">
+        <item quantity="one">%d event waiting to upload</item>
+        <item quantity="other">%d events waiting to upload</item>
+    </plurals>
+    <string name="perf_upload">Upload now</string>
+    <string name="perf_reset">Reset measurements</string>
+
+    <!-- Sign in -->
+    <string name="login_title">Sign in</string>
+    <string name="login_create_title">Create account</string>
+    <string name="login_intro">Sign in to post your own clips. Watching, liking and sharing work without an account.</string>
+    <string name="login_email">Email</string>
+    <string name="login_password">Password</string>
+    <string name="login_handle">Handle</string>
+    <string name="login_handle_help">How you appear on your clips: 3 to 30 letters, numbers, _ or .</string>
+    <string name="login_sign_in">Sign in</string>
+    <string name="login_create">Create account</string>
+    <string name="login_to_create">New here? Create an account</string>
+    <string name="login_to_sign_in">Have an account? Sign in</string>
+
+    <!-- Uploads -->
+    <string name="post_clip">Post a clip</string>
+    <string name="upload_title">Title</string>
+    <string name="upload_pick">Pick a different video</string>
+    <string name="upload_post">Post</string>
+    <string name="upload_hint">Up to 200 MB. Clips are cut to 60 seconds and shown in 3 qualities.</string>
+    <string name="upload_started">Uploading. Follow it in My uploads.</string>
+    <string name="upload_file_gone">The video file is gone. Pick it again.</string>
+    <string name="upload_gave_up">The upload kept failing. Try again later.</string>
+    <string name="upload_notification_title">Uploading your clip</string>
+    <string name="upload_channel">Uploads</string>
+    <string name="my_uploads">My uploads</string>
+    <string name="my_uploads_empty">Nothing posted yet. Tap + on the feed to post a clip.</string>
+    <string name="my_uploads_offline">Can\'t reach the server. Showing what was last loaded.</string>
+    <string name="upload_status_sending">Uploading %1$d%%</string>
+    <string name="upload_status_waiting_network">Waiting for a network</string>
+    <string name="upload_status_pending">Uploading</string>
+    <string name="upload_status_uploaded">Waiting to process</string>
+    <string name="upload_status_processing">Processing</string>
+    <string name="upload_status_ready">Live · tap to watch</string>
+    <string name="upload_status_failed">Failed</string>
+    <string name="upload_delete">Delete clip</string>
+    <string name="upload_cancel">Cancel upload</string>
+    <string name="upload_delete_confirm">Delete this clip? It disappears from the feed for everyone.</string>
+    <string name="upload_delete_action">Delete</string>
+    <string name="upload_deleted">Clip deleted</string>
+    <string name="upload_delete_failed">Couldn\'t delete it. Check your connection and try again.</string>
+    <string name="upload_cancelled">Upload cancelled</string>
+
+    <!-- Settings -->
+    <string name="pref_server">Server</string>
+    <string name="pref_api_url">API address</string>
+    <string name="pref_api_url_hint">Emulator: http://10.0.2.2:8080/. Phone: http://YOUR-COMPUTER-IP:8080/ on the same Wi-Fi.</string>
+    <string name="pref_api_url_invalid">Enter a full address, like http://192.168.1.40:8080/</string>
+    <string name="pref_account">Account</string>
+    <string name="pref_sign_in">Sign in</string>
+    <string name="pref_sign_in_summary">To post your own clips</string>
+    <string name="pref_signed_in_as">Signed in as \@%1$s</string>
+    <string name="pref_sign_out_summary">Tap to sign out</string>
+    <string name="signed_out">Signed out</string>
+    <string name="pref_sign_out">Sign out</string>
+    <string name="pref_my_uploads_summary">Clips you\'ve posted and their processing status</string>
+    <string name="pref_sign_out_confirm">Sign out of Glimpse?</string>
+    <string name="pref_notifications">Notifications</string>
+    <string name="pref_new_clips">New clip notifications</string>
+    <string name="pref_new_clips_summary">A notification when a new clip is posted</string>
+    <string name="pref_new_clips_paused">Paused for now. Check back later.</string>
+    <string name="pref_new_clips_unavailable">Not set up in this build (no Firebase project)</string>
+    <string name="pref_new_clips_denied">Notifications are blocked for Glimpse. Allow them in system settings.</string>
+    <string name="channel_new_clips">New clips</string>
+    <string name="channel_new_clips_description">When a new clip is posted</string>
+    <string name="notification_new_clip_title">New clip from \@%1$s</string>
+    <string name="pref_playback">Playback</string>
+    <string name="pref_preload">Preload upcoming clips</string>
+    <string name="pref_preload_summary">Off lets you measure how much faster clips start with it on</string>
+    <string name="pref_overlay">Start-time overlay</string>
+    <string name="pref_overlay_summary">Prints how long each clip took to start</string>
+</resources>

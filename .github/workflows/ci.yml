@@ -1,0 +1,50 @@
+name: ci
+on:
+  push:
+  pull_request:
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: gradle/actions/setup-gradle@v4
+      # The upload worker's transcoding test runs the real ffmpeg.
+      - name: Install ffmpeg
+        run: command -v ffmpeg || (sudo apt-get update && sudo apt-get install -y --no-install-recommends ffmpeg)
+      # Testcontainers starts real Postgres, Redis and SeaweedFS (S3) on the runner's Docker.
+      - run: ./gradlew test bootJar
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: backend-test-reports
+          path: backend/build/reports/tests/
+
+  android:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: android
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Unit tests, lint, release build (R8) and benchmark module
+        run: ./gradlew :app:testDebugUnitTest :app:lintDebug :app:assembleRelease :benchmark:assembleBenchmarkRelease
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: android-reports
+          path: |
+            android/app/build/reports/
+            android/app/build/test-results/

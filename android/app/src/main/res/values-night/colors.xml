@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Semantic colour tokens, dark theme. Light values and the raw palette: values/colors.xml -->
+<resources>
+    <color name="pn_bg">@color/pn_dark_bg</color>
+    <color name="pn_surface_1">@color/pn_dark_surface_1</color>
+    <color name="pn_surface_2">@color/pn_dark_surface_2</color>
+    <color name="pn_outline">@color/pn_dark_outline</color>
+    <color name="pn_ink">@color/pn_dark_ink</color>
+    <color name="pn_ink_muted">@color/pn_dark_ink_muted</color>
+    <color name="pn_brand">@color/pn_dark_brand</color>
+    <color name="pn_on_brand">@color/pn_dark_on_brand</color>
+    <color name="pn_like">@color/pn_dark_like</color>
+    <color name="pn_success">@color/pn_dark_success</color>
+    <color name="pn_error">@color/pn_dark_error</color>
+</resources>

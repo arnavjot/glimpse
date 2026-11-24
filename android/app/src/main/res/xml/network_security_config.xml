@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The demo backend runs on your own machine over plain HTTP (emulator: 10.0.2.2,
+  phone: your computer's LAN address), so cleartext is allowed. A deployed
+  backend should be HTTPS-only: set cleartextTrafficPermitted="false".
+-->
+<network-security-config xmlns:tools="http://schemas.android.com/tools">
+    <base-config cleartextTrafficPermitted="true" tools:ignore="InsecureBaseConfiguration" />
+</network-security-config>

@@ -1,0 +1,10 @@
+# Normalise line endings in the repo; check text files out natively...
+* text=auto
+# ...except files that run on Linux (CI, Docker), which must stay LF everywhere.
+*.sh text eol=lf
+gradlew text eol=lf
+Dockerfile text eol=lf
+*.bat text eol=crlf
+*.jar binary
+*.jpg binary
+*.png binary

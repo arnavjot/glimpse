@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    The feed's fixed bottom overlay: captions on the left, action rail on the right.
+    It stays put while clips slide underneath and cross-fades to the next clip's details
+    when a swipe settles (FeedOverlay). Bottom padding gets the navigation bar inset in code.
+    The root is not clickable, so a swipe that starts on the captions still reaches the pager.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom"
+    android:gravity="bottom"
+    android:orientation="horizontal"
+    android:paddingStart="@dimen/pn_space_4"
+    android:paddingEnd="@dimen/pn_space_2"
+    android:paddingBottom="@dimen/pn_space_6">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/pn_space_4"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <!-- Sponsored clips only: the label, always above the creator. -->
+        <TextView
+            android:id="@+id/sponsored_label"
+            style="@style/Widget.Glimpse.FeedChip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/pn_space_2"
+            android:paddingTop="@dimen/pn_space_1"
+            android:paddingBottom="@dimen/pn_space_1"
+            android:text="@string/sponsored"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/avatar"
+                style="@style/Widget.Glimpse.FeedText"
+                android:layout_width="@dimen/pn_avatar"
+                android:layout_height="@dimen/pn_avatar"
+                android:background="@drawable/bg_avatar"
+                android:gravity="center"
+                android:importantForAccessibility="no"
+                android:textAppearance="?attr/textAppearanceLabelLarge"
+                tools:text="P" />
+
+            <TextView
+                android:id="@+id/creator"
+                style="@style/Widget.Glimpse.FeedText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/pn_space_2"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:textAppearance="?attr/textAppearanceTitleMedium"
+                tools:text="\@pixelfield" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/title"
+            style="@style/Widget.Glimpse.FeedText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/pn_space_2"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textAppearance="?attr/textAppearanceBodyMedium"
+            tools:text="Fractal Dive #1" />
+
+        <!-- Sponsored clips only: opens the advertiser's link. -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/cta"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/pn_space_3"
+            android:minHeight="@dimen/pn_touch_target"
+            android:text="@string/learn_more"
+            android:textColor="@color/pn_dark_on_brand"
+            android:visibility="gone"
+            app:backgroundTint="@color/pn_dark_brand"
+            tools:visibility="visible" />
+    </LinearLayout>
+
+    <!-- Action rail: like (with count), share, mute. -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <ImageButton
+            android:id="@+id/like"
+            android:layout_width="@dimen/pn_touch_target"
+            android:layout_height="@dimen/pn_touch_target"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/like"
+            android:padding="@dimen/pn_space_2"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_favorite_border"
+            app:tint="@color/pn_feed_ink" />
+
+        <TextView
+            android:id="@+id/like_count"
+            style="@style/Widget.Glimpse.FeedText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:importantForAccessibility="no"
+            android:textAppearance="?attr/textAppearanceLabelSmall"
+            tools:text="128" />
+
+        <ImageButton
+            android:id="@+id/share"
+            android:layout_width="@dimen/pn_touch_target"
+            android:layout_height="@dimen/pn_touch_target"
+            android:layout_marginTop="@dimen/pn_space_4"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/share"
+            android:padding="@dimen/pn_space_3"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_share"
+            app:tint="@color/pn_feed_ink" />
+
+        <ImageButton
+            android:id="@+id/mute"
+            android:layout_width="@dimen/pn_touch_target"
+            android:layout_height="@dimen/pn_touch_target"
+            android:layout_marginTop="@dimen/pn_space_2"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/mute"
+            android:padding="@dimen/pn_space_3"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_volume_up"
+            app:tint="@color/pn_feed_ink" />
+    </LinearLayout>
+</LinearLayout>

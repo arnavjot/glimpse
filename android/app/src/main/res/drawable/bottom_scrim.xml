@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Feed caption scrim: pn_scrim at the bottom fading to clear, so white text reads on any frame. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <gradient
+        android:angle="90"
+        android:endColor="@color/pn_scrim_clear"
+        android:startColor="@color/pn_scrim" />
+</shape>

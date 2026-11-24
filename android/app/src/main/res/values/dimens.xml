@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Glimpse spacing and radius tokens: a 4dp grid. -->
+<resources>
+    <dimen name="pn_space_1">4dp</dimen>
+    <dimen name="pn_space_2">8dp</dimen>
+    <dimen name="pn_space_3">12dp</dimen>
+    <dimen name="pn_space_4">16dp</dimen>
+    <dimen name="pn_space_6">24dp</dimen>
+    <dimen name="pn_space_8">32dp</dimen>
+
+    <dimen name="pn_radius_sm">8dp</dimen>
+    <dimen name="pn_radius_md">16dp</dimen>
+    <dimen name="pn_radius_lg">24dp</dimen>
+
+    <!-- Minimum touch target (Material / Android accessibility guideline). -->
+    <dimen name="pn_touch_target">48dp</dimen>
+    <dimen name="pn_avatar">32dp</dimen>
+    <!-- How far the pull-to-refresh spinner travels below the status bar. -->
+    <dimen name="pn_refresh_travel">64dp</dimen>
+</resources>

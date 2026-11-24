@@ -1,0 +1,34 @@
+plugins {
+    id 'com.android.test'
+    id 'androidx.baselineprofile'
+}
+
+android {
+    namespace 'com.arnavjot.glimpse.benchmark'
+    compileSdk 35
+
+    defaultConfig {
+        minSdk 28
+        targetSdk 35
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    targetProjectPath = ':app'
+}
+
+// Generate the Baseline Profile on a connected device (a physical phone gives
+// the most realistic profile; an emulator works for generation).
+baselineProfile {
+    useConnectedDevices = true
+}
+
+dependencies {
+    implementation 'androidx.test.ext:junit:1.2.1'
+    implementation 'androidx.test.uiautomator:uiautomator:2.3.0'
+    implementation 'androidx.benchmark:benchmark-macro-junit4:1.3.4'
+}

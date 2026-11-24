@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Component styles built from the design system tokens. -->
+<resources>
+
+    <!-- Text drawn over video: white, with a soft shadow so it reads on bright frames too. -->
+    <style name="Widget.Glimpse.FeedText" parent="">
+        <item name="android:textColor">@color/pn_feed_ink</item>
+        <item name="android:shadowColor">@color/pn_text_shadow</item>
+        <item name="android:shadowDy">1</item>
+        <item name="android:shadowRadius">4</item>
+    </style>
+
+    <!-- Pill over video: offline banner and the debug overlay. -->
+    <style name="Widget.Glimpse.FeedChip" parent="">
+        <item name="android:background">@drawable/bg_feed_chip</item>
+        <item name="android:textColor">@color/pn_feed_ink</item>
+        <item name="android:textAppearance">?attr/textAppearanceLabelSmall</item>
+        <item name="android:paddingStart">@dimen/pn_space_3</item>
+        <item name="android:paddingEnd">@dimen/pn_space_3</item>
+        <item name="android:paddingTop">@dimen/pn_space_2</item>
+        <item name="android:paddingBottom">@dimen/pn_space_2</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:drawablePadding">@dimen/pn_space_2</item>
+        <item name="drawableTint">@color/pn_feed_ink</item>
+    </style>
+
+    <!-- Performance: a card's small caption above or below a metric. -->
+    <style name="Widget.Glimpse.MetricLabel" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textAppearance">?attr/textAppearanceLabelLarge</item>
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+    </style>
+
+    <style name="Widget.Glimpse.MetricValue" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">@dimen/pn_space_1</item>
+        <item name="android:textAppearance">@style/TextAppearance.Glimpse.Metric</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
+    </style>
+
+    <style name="Widget.Glimpse.MetricDetail" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">@dimen/pn_space_1</item>
+        <item name="android:textAppearance">?attr/textAppearanceBodyMedium</item>
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+    </style>
+</resources>

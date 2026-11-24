@@ -1,0 +1,136 @@
+spring:
+  application:
+    name: glimpse-server
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/glimpse}
+    username: ${DATABASE_USER:glimpse}
+    password: ${DATABASE_PASSWORD:glimpse}
+    hikari:
+      maximum-pool-size: 20
+      connection-timeout: 3000
+  data:
+    redis:
+      url: ${REDIS_URL:redis://localhost:6379}
+      # Fail fast: a slow or dead Redis must not hold up the feed, which falls back to Postgres.
+      timeout: 500ms
+      connect-timeout: 500ms
+  jackson:
+    # The API speaks snake_case JSON, like the Android app's DTOs.
+    property-naming-strategy: SNAKE_CASE
+    default-property-inclusion: always
+  flyway:
+    enabled: true
+  threads:
+    virtual:
+      enabled: false
+  task:
+    scheduling:
+      pool:
+        # The worker's job loop, its cleanup and the rollup/ranking refresh each get a
+        # thread, so a long transcode never holds up the others.
+        size: 3
+
+server:
+  port: 8000
+  shutdown: graceful
+  # The real client IP for per-IP limits. Behind nginx every request comes from nginx, so
+  # Tomcat takes the client from X-Forwarded-For, but only when the request comes from the
+  # trusted proxy (a regex of its address; Compose gives nginx a fixed one). From anyone
+  # else the header is ignored, so a client can't pick its own IP. The default trusts nobody.
+  forward-headers-strategy: native
+  tomcat:
+    remoteip:
+      internal-proxies: ${TRUSTED_PROXY:(?!)}
+      remote-ip-header: X-Forwarded-For
+      protocol-header: X-Forwarded-Proto
+
+glimpse:
+  # Where the phone fetches video from (nginx). 10.0.2.2 is the host as seen
+  # from the Android emulator; on a real phone use your computer's LAN address.
+  media-base-url: ${MEDIA_BASE_URL:http://10.0.2.2:8080/media}
+  # On startup, load videos from this manifest if the table is empty.
+  seed-manifest: ${SEED_MANIFEST:media/manifest.json}
+  feed-page-max: 50
+  feed-cache-ttl-seconds: 30
+  events-batch-max: 500
+  sponsored:
+    # One sponsored clip after this many clips on each feed page (0 turns them off).
+    slot: 5
+    # At most this many sponsored impressions per device per 24 hours.
+    daily-cap: 6
+    # Sponsored creatives to seed from (written by scripts/make_ads.sh).
+    seed-manifest: ${SPONSORED_MANIFEST:media/sponsored.json}
+  push:
+    # Firebase service-account JSON (from the Firebase console). Empty or missing file:
+    # push is off and the admin push endpoint answers 503.
+    credentials-file: ${FIREBASE_CREDENTIALS:}
+    # Shared secret for the admin endpoints (header X-Admin-Token). Empty: they are off (404).
+    admin-token: ${ADMIN_TOKEN:}
+  app:
+    # The Android app, for share links: the Play Store fallback, deferred deep links and
+    # the App Links file (/.well-known/assetlinks.json).
+    package-name: com.arnavjot.glimpse
+    # SHA-256 fingerprints of the app's signing certificates, comma separated (Play
+    # Console, App integrity). Empty: assetlinks.json is not served (404).
+    sha256-fingerprints: ${APP_CERT_SHA256:}
+  auth:
+    # HMAC key for access tokens (JWT, HS256), at least 32 characters. Empty: a random key
+    # is made at startup, so tokens don't survive a restart (fine for local runs only).
+    jwt-secret: ${JWT_SECRET:}
+    access-token-minutes: 15
+    refresh-token-days: 30
+  storage:
+    # S3-compatible object storage for original uploads (SeaweedFS in docker-compose).
+    endpoint: ${S3_ENDPOINT:http://localhost:8333}               # how the server reaches it
+    public-endpoint: ${S3_PUBLIC_ENDPOINT:http://localhost:8333} # what phones upload to
+    region: us-east-1
+    access-key: ${S3_ACCESS_KEY:glimpse}
+    secret-key: ${S3_SECRET_KEY:glimpse-dev-secret}
+    bucket: ${S3_BUCKET:glimpse-uploads}
+  uploads:
+    max-bytes: 209715200   # 200 MB per original
+    max-seconds: 60        # clips are cut to this length
+    url-minutes: 15        # how long a pre-signed upload URL works
+    abandon-hours: 24      # an upload never completed in this time is cleaned up
+    failed-days: 7         # failed uploads are kept this long (for "why did it fail?")
+    max-in-progress: 3     # per account: waiting for the file, uploaded or processing
+  # Token buckets in Redis: a burst of up to `capacity`, refilled over `minutes`. Per IP
+  # limits are generous because people behind one router or a mobile carrier share an IP.
+  rate-limits:
+    login-per-ip:        {capacity: 20, minutes: 10}
+    register-per-ip:     {capacity: 5,  minutes: 60}
+    refresh-per-ip:      {capacity: 60, minutes: 10}
+    uploads-per-account: {capacity: 10, minutes: 60}
+  worker:
+    # The transcoding worker (a separate container runs with WORKER_ENABLED=true).
+    enabled: ${WORKER_ENABLED:false}
+    media-dir: ${MEDIA_DIR:media}   # where finished HLS goes (served by nginx)
+    poll-millis: 2000
+    lease-minutes: 10               # a job not finished by then is taken over by another worker
+    max-attempts: 3
+  # Developer pages (/dev/...), e.g. the deep-link tester. Off unless DEV_TOOLS=true.
+  dev-tools: ${DEV_TOOLS:false}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,prometheus,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      group:
+        # Ready means Postgres is reachable; Redis only makes the feed faster.
+        readiness:
+          include: db
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+      slo:
+        http.server.requests: 5ms,10ms,25ms,50ms,100ms,250ms,500ms
+  prometheus:
+    metrics:
+      export:
+        enabled: true

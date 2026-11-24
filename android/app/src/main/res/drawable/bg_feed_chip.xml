@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Pill drawn over video: the offline banner and the debug overlay. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@color/pn_feed_chip" />
+    <corners android:radius="@dimen/pn_radius_lg" />
+</shape>

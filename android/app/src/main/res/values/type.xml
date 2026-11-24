@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Glimpse type tokens. Roboto (the system face) for text, monospace for numbers.
+    Each style extends the matching Material 3 text appearance, so components that
+    read ?attr/textAppearance* pick these up through the theme.
+-->
+<resources>
+    <style name="TextAppearance.Glimpse.TitleLarge" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:textSize">22sp</item>
+        <item name="lineHeight">28sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+
+    <style name="TextAppearance.Glimpse.TitleMedium" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:textSize">16sp</item>
+        <item name="lineHeight">22sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+
+    <style name="TextAppearance.Glimpse.BodyLarge" parent="TextAppearance.Material3.BodyLarge">
+        <item name="android:textSize">16sp</item>
+        <item name="lineHeight">24sp</item>
+    </style>
+
+    <style name="TextAppearance.Glimpse.BodyMedium" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:textSize">14sp</item>
+        <item name="lineHeight">20sp</item>
+    </style>
+
+    <style name="TextAppearance.Glimpse.LabelLarge" parent="TextAppearance.Material3.LabelLarge">
+        <item name="android:textSize">14sp</item>
+        <item name="lineHeight">20sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextAppearance.Glimpse.LabelSmall" parent="TextAppearance.Material3.LabelSmall">
+        <item name="android:textSize">12sp</item>
+        <item name="lineHeight">16sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- Big numbers on the Performance screen. -->
+    <style name="TextAppearance.Glimpse.Metric" parent="TextAppearance.Material3.HeadlineMedium">
+        <item name="android:textSize">28sp</item>
+        <item name="lineHeight">32sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">monospace</item>
+        <item name="fontFamily">monospace</item>
+    </style>
+
+    <!-- Small monospaced numbers: the debug overlay. -->
+    <style name="TextAppearance.Glimpse.Mono" parent="TextAppearance.Glimpse.LabelSmall">
+        <item name="android:fontFamily">monospace</item>
+        <item name="fontFamily">monospace</item>
+    </style>
+</resources>

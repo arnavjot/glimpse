@@ -1,0 +1,27 @@
+# Android
+android/.gradle/
+android/build/
+android/*/build/
+android/local.properties
+# Firebase config: project-specific, keep out of the repo.
+android/app/google-services.json
+android/.idea/
+android/captures/
+*.iml
+.idea/
+**/.idea/
+*.log
+.DS_Store
+
+# Backend
+backend/.gradle/
+backend/build/
+backend/media/
+# Firebase service account (FIREBASE_CREDENTIALS) and other secrets.
+backend/secrets/
+# Source footage: stock licenses allow use in the app, not redistribution in a repo.
+backend/media-src/*
+!backend/media-src/README.md
+!backend/media-src/credits.example.csv
+!backend/media-src/ATTRIBUTION.md
+.env
