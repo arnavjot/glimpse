@@ -21,6 +21,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.arnavjot.glimpse.server.common.RedisBreaker;
+
 /**
  * Accounts and sessions.
  *
@@ -53,6 +55,7 @@ public class AuthService {
     private final JdbcTemplate jdbc;
     private final TokenService tokens;
     private final StringRedisTemplate redis;
+    private final RedisBreaker breaker;
     private final Duration refreshTtl;
     private final Clock clock;
     private final BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
@@ -60,12 +63,15 @@ public class AuthService {
     private final String dummyHash = bcrypt.encode(UUID.randomUUID().toString());
 
     @Autowired
-    public AuthService(JdbcTemplate jdbc, TokenService tokens, StringRedisTemplate redis, AuthProperties props) {
-        this(jdbc, tokens, redis, props, Clock.systemUTC());
+    public AuthService(JdbcTemplate jdbc, TokenService tokens, StringRedisTemplate redis, AuthProperties props,
+                       RedisBreaker breaker) {
+        this(jdbc, tokens, redis, props, breaker, Clock.systemUTC());
     }
 
-    AuthService(JdbcTemplate jdbc, TokenService tokens, StringRedisTemplate redis, AuthProperties props, Clock clock) {
+    AuthService(JdbcTemplate jdbc, TokenService tokens, StringRedisTemplate redis, AuthProperties props,
+                RedisBreaker breaker, Clock clock) {
         this.jdbc = jdbc;
+        this.breaker = breaker;
         this.tokens = tokens;
         this.redis = redis;
         this.refreshTtl = Duration.ofDays(props.refreshTokenDays());
@@ -192,13 +198,18 @@ public class AuthService {
     private void countAttempt(String email) {
         String key = "login-attempts:" + email;
         try {
-            Long n = redis.opsForValue().increment(key);
-            if (n != null && n == 1) redis.expire(key, ATTEMPT_WINDOW);
+            Long n = breaker.call(() -> {
+                Long count = redis.opsForValue().increment(key);
+                if (count != null && count == 1) redis.expire(key, ATTEMPT_WINDOW);
+                return count;
+            });
             if (n != null && n > MAX_ATTEMPTS) {
                 throw new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS, "too many attempts, try again later");
             }
         } catch (ResponseStatusException e) {
             throw e;
+        } catch (RedisBreaker.OpenException e) {
+            // Redis already known to be down: allow, without a log line per attempt.
         } catch (RuntimeException e) {
             log.warn("Login throttling unavailable (Redis): allowing the attempt", e);
         }

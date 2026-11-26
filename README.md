@@ -17,6 +17,11 @@ and a Spring Boot backend. The point of the project is **measured playback perfo
 clips are preloaded around the one on screen, served from a disk cache, and every start time
 is recorded, so the app can show how much faster clips start with preloading on than off.
 
+<p align="center">
+  <img src="docs/glimpse-demo.gif" width="270" alt="Glimpse on a phone: cold launch, then swiping through clips with the start-time overlay showing each clip's time to first frame">
+  <br><sub>Release build on a Realme phone over Wi-Fi: cold launch, then swiping. The overlay prints each clip's time to first frame.</sub>
+</p>
+
 Around that: creators post clips (pre-signed uploads to S3 storage, transcoded by an ffmpeg
 worker into adaptive HLS), a **"For You"** feed ranked from hourly rollups of playback events
 and tested against newest-first in an **A/B experiment** with significance tests, accounts
@@ -157,21 +162,36 @@ flowchart LR
 
 ## Numbers
 
-Measured on a physical phone (emulator timings aren't meaningful). Fill these in from your
-own runs; the sections below say exactly how to get each one.
+Measured on a physical phone (emulator timings aren't meaningful): Realme RMX3395, Android 14,
+release build (R8), on home Wi-Fi with the backend on a laptop on the same network. Playback:
+two passes over the 13-clip library, ~4 s per clip, each pass on a fresh install (empty cache),
+one with preloading off and one with it on. Small sample, and a LAN is kinder than the internet;
+the gap would be larger on a slower network. The sections below say how to get each number.
 
 | Metric | Result | How |
 |---|---|---|
-| Time to first frame, preloading **on** (p50 / p95) | _ms / _ms | Performance screen |
-| Time to first frame, preloading **off** (p50 / p95) | _ms / _ms | Performance screen |
-| Rebuffers per play | _ | Performance screen |
-| Disk cache byte hit ratio | _% | Performance screen |
-| Cold start without / with Baseline Profile (median) | _ms / _ms | `StartupBenchmark` |
-| Swipe frame time p50 / p90 / p99, frame overruns | _ | `FeedScrollBenchmark` |
+| Time to first frame, preloading **off** (median / slowest, clips 2–14) | 290 ms / 590 ms | Performance screen + `playback_events` |
+| Time to first frame, preloading **on** (median / slowest, clips 2–14) | **196 ms / 246 ms** (−32% / −58%) | Performance screen + `playback_events` |
+| Time to first frame, first clip of a session (off / on) | 440 ms / 846 ms: nothing to preload yet, so this is app start + feed load | `playback_events` |
+| Rebuffers per play | 0 in 28 plays | Performance screen |
+| Disk cache byte hit ratio | 79% (clips loop, so replays come from disk) | Performance screen |
+| Cold start without / with Baseline Profile (median of 10, time to initial display) | 821 ms / **684 ms (−17%)**; slowest 1,242 → 836 ms (−33%) | `StartupBenchmark` |
+| Swipe frame CPU time p50 / p90 / p95 / p99 (5 runs × ~3,800 frames, 60 Hz) | 7.0 / 8.5 / 10.0 / 23.7 ms; frame overrun p95 −5.6 ms (on time), p99 +8.8 ms (late) | `FeedScrollBenchmark` |
 | Release APK size (R8) vs debug | 3.1 MB vs 10.6 MB | `./gradlew assembleRelease` |
-| Backend feed p95 / p99 at _ req/s, failures | _ | k6 `load/feed.js` |
-| Failure drills (offline, killed mid-upload, Redis down, Postgres down) | _ | [drills](backend/drills/README.md) |
+| Backend feed p95 / p99, failures (laptop: i7-1165G7, whole stack in Docker Desktop) | 300 sessions/s: 3.9 / 12.9 ms, 0 of 91,188 failed. 1,000 sessions/s (1,120 req/s): 2.6 / 11.6 ms; 5 of 302,427 failed, all event uploads during one 3 s database stall (Postgres checkpoint on Docker's virtual disk; the app's queue retries them) | k6 `load/feed.js` |
+| Creator upload: 15 s 1080p clip (13.3 MB) posted from the phone over Wi-Fi | Post → in the feed **40.5 s**: upload link 0.27 s; transfer ~31 s (~3.4 Mbit/s into SeaweedFS behind Docker Desktop's port forwarding); worker picked it up at once; ffmpeg to 720p/540p/360p HLS + poster **9.4 s** (0.6× the clip's length) | `uploads` row + worker log |
+| Redis down (drill 3) | feed `200` every time: first request 517 ms, then ~10 ms (circuit breaker skips Redis) | [drills](backend/drills/README.md) |
+| Phone offline for 24 clips (drill 1) | 78 events queued → 78 stored, 0 lost, 0 duplicates | [drills](backend/drills/README.md) |
+| App killed mid-upload (drill 2) | 75 events stored once; 150 retried copies recognised as duplicates | [drills](backend/drills/README.md) |
+| Postgres down (drill 4) | cached clips kept playing, 34 events queued → 34 stored. Gaps found: feed `500` once its cache expired; upload back-off delayed delivery >4 min after recovery | [drills](backend/drills/README.md) |
 | Tests | Android: unit tests with JUnit, Robolectric and MockWebServer. Backend: integration tests with JUnit 5 and Testcontainers (real Postgres, Redis and SeaweedFS; real ffmpeg) | CI |
+
+The 1,000 sessions/s run in the provisioned Grafana dashboard: ~1.2K feed req/s held for three
+minutes with feed p99 in single-digit milliseconds (the spike at the start is JVM warm-up), ~2K
+playback events/s stored with no duplicates. The bump in events ingest latency and DB connections
+around 20:06 is the 3 s Postgres checkpoint stall; the feed, served from Redis, didn't notice it.
+
+![Grafana during the k6 load test](docs/grafana-load-test.png)
 
 ## Run it
 
@@ -364,7 +384,18 @@ cd android
 ```
 
 Results are printed and saved under `benchmark/build/outputs/`. Compare
-`coldStartWithoutBaselineProfile` with `coldStartWithBaselineProfile`.
+`coldStartWithoutBaselineProfile` with `coldStartWithBaselineProfile`. Build with
+`-PglimpseApiUrl=http://YOUR-COMPUTER-IP:8080/` so the reinstalled app finds the server.
+
+On Realme / Oppo / ColorOS phones the benchmarks fail with "Failed to grant permissions" unless
+**Developer options → Disable permission monitoring** is on. Expect it to be slow there: profile
+generation took ~25 minutes and each swipe iteration ~4 minutes (a 400 MB trace each).
+
+A quicker check without Macrobenchmark (`am start -W` for start time, `dumpsys gfxinfo` for
+frames) is fine for a rough start time and frame timing but not for judging the profile: with
+`cmd package compile -m verify` vs `-m speed` it showed 355 vs 346 ms, a 3% gap, where
+Macrobenchmark (which resets compilation its own way and traces every launch, so its absolute
+numbers are higher) measured 17%. Use the benchmark for that comparison.
 
 **Backend under load.** With the stack running:
 

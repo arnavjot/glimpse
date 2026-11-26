@@ -47,8 +47,11 @@ curl -s -o /dev/null -w "%{http_code} %{time_total}s\n" "localhost:8000/v1/feed?
 
 Pull to refresh in the app and keep swiping. Then `docker compose start redis`.
 
-Expected: `200` in well under a second (Redis calls give up after 500 ms and the feed is read from
-Postgres); the Grafana "Redis unavailable" line rises; nothing breaks in the app.
+Expected: `200` every time. The first request waits out one 500 ms Redis timeout; that opens a
+circuit breaker (`glimpse_redis_breaker_open` = 1), and for the next 5 s Redis is skipped instead
+of waited on, so the feed comes straight from Postgres. Every 5 s one request tries Redis again;
+once it's back the breaker closes. The Grafana "Redis unavailable" line rises; nothing breaks in
+the app. (Before the breaker, every feed request took 1 s: two Redis calls, 500 ms each.)
 
 ## 4. Postgres down: cached clips still play, events wait
 
@@ -67,7 +70,7 @@ uploads fail (5xx means "retry later"), and once Postgres is back every queued e
 
 | Drill | Result |
 |---|---|
-| 1. Offline 30 clips | _ events queued → _ stored, 0 lost |
-| 2. Killed mid-upload | _ stored once, _ duplicates ignored |
-| 3. Redis down | feed `200` in _ ms |
-| 4. Postgres down | cached clips played: yes/no; _ events stored after recovery |
+| 1. Offline 30 clips | 78 events queued (24 clips, all from the disk cache, 0 rebuffers) → 78 stored, 0 lost, 0 duplicates; uploaded on its own within seconds of reconnecting |
+| 2. Killed mid-upload | 75 events stored once; 150 duplicates ignored (the phone's own retry while the API hung, then the reopened app re-sending its unacknowledged queue). Run with the API paused (`docker compose pause api`) so the kill lands while the upload is in flight |
+| 3. Redis down | feed `200` every time: first request 517 ms (one timeout), then ~10 ms with the breaker open; closes once Redis is back |
+| 4. Postgres down | cached clips played: yes ("Offline · showing saved clips", 0 rebuffers); 34 events queued → 34 stored, 0 duplicates. The API reconnected ~6 s after Postgres was ready. Two gaps: the feed returned `500` after 3 s once its cached page had expired, and the phone's upload, in exponential back-off (30 s doubling), hadn't retried 4 minutes later (sent with Upload now) |

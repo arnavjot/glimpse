@@ -55,7 +55,7 @@ public class UploadActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityUploadBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        SystemBarInsets.pad(binding.scroll, SystemBarInsets.BOTTOM);
+        SystemBarInsets.padForKeyboard(binding.scroll);
         setSupportActionBar(binding.appBar.toolbar);
         if (getSupportActionBar() != null) getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         viewModel = new ViewModelProvider(this, factory).get(UploadViewModel.class);

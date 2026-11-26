@@ -11,6 +11,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
 import com.arnavjot.glimpse.server.common.GlimpseProperties;
+import com.arnavjot.glimpse.server.common.RedisBreaker;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -29,8 +30,12 @@ public class FeedCache {
     private final int ttlSeconds;
     private final MeterRegistry meters;
 
-    public FeedCache(StringRedisTemplate redis, ObjectMapper json, GlimpseProperties props, MeterRegistry meters) {
+    private final RedisBreaker breaker;
+
+    public FeedCache(StringRedisTemplate redis, ObjectMapper json, GlimpseProperties props, MeterRegistry meters,
+                     RedisBreaker breaker) {
         this.redis = redis;
+        this.breaker = breaker;
         this.json = json;
         this.ttlSeconds = props.feedCacheTtlSeconds();
         this.meters = meters;
@@ -42,7 +47,7 @@ public class FeedCache {
 
     public Optional<FeedPage> get(String cursor, int limit) {
         try {
-            String raw = redis.opsForValue().get(key(cursor, limit));
+            String raw = breaker.call(() -> redis.opsForValue().get(key(cursor, limit)));
             count(raw == null ? "miss" : "hit");
             return raw == null ? Optional.empty() : Optional.of(json.readValue(raw, FeedPage.class));
         } catch (DataAccessException e) {
@@ -57,8 +62,8 @@ public class FeedCache {
     public void put(String cursor, int limit, FeedPage page) {
         int jitter = ThreadLocalRandom.current().nextInt(0, Math.max(1, ttlSeconds / 5) + 1);
         try {
-            redis.opsForValue().set(key(cursor, limit), json.writeValueAsString(page),
-                    Duration.ofSeconds(ttlSeconds + jitter));
+            String raw = json.writeValueAsString(page);
+            breaker.run(() -> redis.opsForValue().set(key(cursor, limit), raw, Duration.ofSeconds(ttlSeconds + jitter)));
         } catch (DataAccessException | JsonProcessingException ignored) {
             // Caching is best effort: the response is already correct.
         }
@@ -72,7 +77,7 @@ public class FeedCache {
         List<String> keys = new ArrayList<>(maxLimit);
         for (int limit = 1; limit <= maxLimit; limit++) keys.add(key(null, limit));
         try {
-            redis.delete(keys);
+            breaker.call(() -> redis.delete(keys));
         } catch (DataAccessException ignored) {
             // Redis down: the pages expire on their own within the TTL.
         }

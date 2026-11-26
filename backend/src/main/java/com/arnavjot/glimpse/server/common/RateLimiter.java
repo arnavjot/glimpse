@@ -72,9 +72,12 @@ public class RateLimiter {
     private final StringRedisTemplate redis;
     private final MeterRegistry meters;
 
-    public RateLimiter(StringRedisTemplate redis, MeterRegistry meters) {
+    private final RedisBreaker breaker;
+
+    public RateLimiter(StringRedisTemplate redis, MeterRegistry meters, RedisBreaker breaker) {
         this.redis = redis;
         this.meters = meters;
+        this.breaker = breaker;
     }
 
     /**
@@ -86,11 +89,13 @@ public class RateLimiter {
         double perMs = limit.capacity() / (double) limit.period().toMillis();
         List<?> r;
         try {
-            r = redis.execute(TAKE, List.of("rl:" + limit.name() + ":" + who),
-                    String.valueOf(limit.capacity()), String.valueOf(perMs));
+            r = breaker.call(() -> redis.execute(TAKE, List.of("rl:" + limit.name() + ":" + who),
+                    String.valueOf(limit.capacity()), String.valueOf(perMs)));
         } catch (RuntimeException e) {
             meters.counter("glimpse.ratelimit.unavailable", "limit", limit.name()).increment();
-            log.warn("Rate limit {} unavailable (Redis): allowing the request", limit.name(), e);
+            if (!(e instanceof RedisBreaker.OpenException)) { // skipped calls were logged when it opened
+                log.warn("Rate limit {} unavailable (Redis): allowing the request", limit.name(), e);
+            }
             return;
         }
         if (r != null && ((Number) r.get(0)).longValue() == 1) return;

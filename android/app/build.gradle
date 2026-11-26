@@ -22,8 +22,11 @@ android {
         versionName '1.0.0'
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         // 10.0.2.2 is the host machine as seen from the Android emulator. On a real
-        // phone, change it in the app's Settings to your computer's LAN address.
-        buildConfigField 'String', 'DEFAULT_API_URL', '"http://10.0.2.2:8080/"'
+        // phone, change it in the app's Settings to your computer's LAN address, or build with
+        // -PglimpseApiUrl=http://YOUR-COMPUTER-IP:8080/ (needed for the benchmarks on a phone:
+        // each run reinstalls the app, which resets Settings).
+        def apiUrl = (project.findProperty('glimpseApiUrl') ?: 'http://10.0.2.2:8080/').toString().trim()
+        buildConfigField 'String', 'DEFAULT_API_URL', "\"${apiUrl}\""
         // Share links: set glimpseShareHost in gradle.properties to the domain serving the
         // backend over HTTPS (e.g. glimpse.example.com). Links become https://<host>/v/<id>
         // and open the app directly (App Links). Empty: links use the API address, which
